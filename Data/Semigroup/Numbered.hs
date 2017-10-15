@@ -22,7 +22,7 @@ module Data.Semigroup.Numbered ( SemigroupNo(..)
                                , (│), (──), (■), (┃), (━━), (██)
                                ) where
 
-import GHC.TypeNats
+import GHC.TypeLits
 import qualified Data.List.NonEmpty as NE
 import Data.Foldable
 
