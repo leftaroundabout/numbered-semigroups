@@ -12,6 +12,7 @@
 {-# LANGUAGE MultiParamTypeClasses     #-}
 {-# LANGUAGE ConstraintKinds           #-}
 {-# LANGUAGE FlexibleContexts          #-}
+{-# LANGUAGE FlexibleInstances         #-}
 
 module Data.Semigroup.Numbered ( SemigroupNo(..)
                                -- * The common directions
@@ -27,6 +28,7 @@ import qualified Data.List.NonEmpty as NE
 import Data.Foldable
 
 import Data.Proxy
+import Data.Void
 
 import Data.CallStack (HasCallStack)
 
@@ -53,6 +55,31 @@ class SemigroupNo (n :: Nat) g where
         | otherwise = g (x <> x) (pred y `quot` 2) (x <> z)
       (<>) = sappendN p
 
+instance (SemigroupNo n g) => SemigroupNo n (a -> g) where
+  sappendN p f g x = sappendN p (f x) (g x)
+  sconcatN p fs x = sconcatN p $ ($x)<$>fs
+  stimesN p n f = stimesN p n . f
+
+instance (SemigroupNo n g) => SemigroupNo n (Maybe g) where
+  sappendN _ Nothing b = b
+  sappendN _ a Nothing = a
+  sappendN p (Just a) (Just b) = Just $ sappendN p a b
+  stimesN _ _ Nothing = Nothing
+  stimesN p n (Just a) = Just $ stimesN p n a
+
+instance SemigroupNo n () where
+  sappendN _ () () = ()
+  sconcatN _ _ = ()
+  stimesN _ _ () = ()
+
+instance SemigroupNo n (Proxy x) where
+  sappendN _ Proxy Proxy = Proxy
+  sconcatN _ _ = Proxy
+  stimesN _ _ Proxy = Proxy
+
+instance SemigroupNo n Void where
+  sappendN _ = absurd
+  stimesN _ _ = absurd
 
 type SemigroupX = SemigroupNo 0
 
