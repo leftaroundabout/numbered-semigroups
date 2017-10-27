@@ -34,6 +34,7 @@ import Data.CallStack (HasCallStack)
 
 class SemigroupNo (n :: Nat) g where
   sappendN :: proxy n -> g -> g -> g
+  sappendN p x y = sconcatN p $ x NE.:|[y]
   
   sconcatN :: proxy n -> NE.NonEmpty g -> g
   sconcatN = foldr1 . sappendN
@@ -80,6 +81,39 @@ instance SemigroupNo n (Proxy x) where
 instance SemigroupNo n Void where
   sappendN _ = absurd
   stimesN _ _ = absurd
+
+instance SemigroupNo 0 [Void] where sappendN _ [] [] = []
+instance SemigroupNo 0 [()] where sappendN _ = (++)
+instance SemigroupNo 0 [Char] where sappendN _ = (++)
+instance SemigroupNo 0 [Int] where sappendN _ = (++)
+instance SemigroupNo 0 [Integer] where sappendN _ = (++)
+instance SemigroupNo 0 [Float] where sappendN _ = (++)
+instance SemigroupNo 0 [Double] where sappendN _ = (++)
+instance SemigroupNo 0 [Rational] where sappendN _ = (++)
+instance SemigroupNo 0 [Maybe a] where sappendN _ = (++)
+instance (SemigroupNo 0 [a]) => SemigroupNo 0 [[a]] where
+  sappendN _ [] ys = ys
+  sappendN _ xs [] = xs
+  sappendN p (x:xs) (y:ys) = sappendN p x y : sappendN p xs ys
+
+instance SemigroupNo 1 [[Void]] where sappendN _ = (++)
+instance SemigroupNo 1 [[()]] where sconcatN _ = paddedLines () . concat
+instance SemigroupNo 1 [[Char]] where sconcatN _ = paddedLines ' ' . concat
+instance SemigroupNo 1 [[Int]] where sconcatN _ = paddedLines 0 . concat
+instance SemigroupNo 1 [[Integer]] where sconcatN _ = paddedLines 0 . concat
+instance SemigroupNo 1 [[Float]] where sconcatN _ = paddedLines 0 . concat
+instance SemigroupNo 1 [[Double]] where sconcatN _ = paddedLines 0 . concat
+instance SemigroupNo 1 [[Rational]] where sconcatN _ = paddedLines 0 . concat
+instance SemigroupNo 1 [[Maybe a]] where sconcatN _ = paddedLines Nothing . concat
+instance (SemigroupNo 1 [[a]]) => SemigroupNo 1 [[[a]]] where
+  sappendN _ [] ys = ys
+  sappendN _ xs [] = xs
+  sappendN p (x:xs) (y:ys) = sappendN p x y : sappendN p xs ys
+
+paddedLines :: a -> [[a]] -> [[a]]
+paddedLines padr xs = mkPadded <$> xs
+ where mkPadded cs = cs ++ replicate (paddingLen - length cs) padr
+       paddingLen = maximum $ length <$> xs
 
 type SemigroupX = SemigroupNo 0
 
