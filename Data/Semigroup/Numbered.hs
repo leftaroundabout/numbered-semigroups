@@ -30,6 +30,8 @@ import qualified Data.Foldable as Foldable
 import Data.Proxy
 import Data.Void
 
+import Control.Applicative
+
 import Data.CallStack (HasCallStack)
 
 class SemigroupNo (n :: Nat) g where
