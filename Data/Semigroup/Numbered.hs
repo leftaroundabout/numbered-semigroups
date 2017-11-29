@@ -25,7 +25,7 @@ module Data.Semigroup.Numbered ( SemigroupNo(..)
 
 import GHC.TypeLits
 import qualified Data.List.NonEmpty as NE
-import Data.Foldable
+import qualified Data.Foldable as Foldable
 
 import Data.Proxy
 import Data.Void
@@ -37,7 +37,7 @@ class SemigroupNo (n :: Nat) g where
   sappendN p x y = sconcatN p $ x NE.:|[y]
   
   sconcatN :: proxy n -> NE.NonEmpty g -> g
-  sconcatN = foldr1 . sappendN
+  sconcatN = Foldable.foldr1 . sappendN
   
   stimesN :: (Integral b, HasCallStack) => proxy n -> b -> g -> g
    -- Adapted from
