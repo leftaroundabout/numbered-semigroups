@@ -35,6 +35,8 @@ import Control.Applicative
 import Data.CallStack (HasCallStack)
 
 class SemigroupNo (n :: Nat) g where
+  {-# MINIMAL sappendN | sconcatN #-}
+
   sappendN :: proxy n -> g -> g -> g
   sappendN p x y = sconcatN p $ x NE.:|[y]
   
