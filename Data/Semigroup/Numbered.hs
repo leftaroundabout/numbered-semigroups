@@ -62,7 +62,7 @@ class SemigroupNo (n :: Nat) g where
 
 instance (SemigroupNo n g) => SemigroupNo n (a -> g) where
   sappendN p f g x = sappendN p (f x) (g x)
-  sconcatN p fs x = sconcatN p $ ($x)<$>fs
+  sconcatN p fs x = sconcatN p $ ($ x)<$>fs
   stimesN p n f = stimesN p n . f
 
 instance (SemigroupNo n g) => SemigroupNo n (Maybe g) where
