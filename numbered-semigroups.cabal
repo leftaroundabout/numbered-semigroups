@@ -27,7 +27,7 @@ library
   exposed-modules:     Data.Semigroup.Numbered
   -- other-modules:       
   -- other-extensions:    
-  build-depends:       base >=4.6 && <4.20
+  build-depends:       base >=4.6 && <4.21
                        , semigroups <0.21
                        , void <0.8
                        , tagged <0.9
