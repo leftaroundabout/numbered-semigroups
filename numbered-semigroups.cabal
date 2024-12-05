@@ -16,7 +16,7 @@ homepage:            https://github.com/leftaroundabout/numbered-semigroups
 license:             LGPL-3
 license-file:        LICENSE
 author:              Justus Sagemüller
-maintainer:          (@) jsag $ hvl.no
+maintainer:          (@) justussa $ kth.se
 -- copyright:           
 category:            Data
 build-type:          Simple
